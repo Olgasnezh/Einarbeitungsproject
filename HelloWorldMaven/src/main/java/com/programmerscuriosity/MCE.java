@@ -24,29 +24,45 @@ public class MCE {
     }
 
     private void addEmployees(){
-        addEmployee(374955,"name: Sloboda, Oliver, email: Oliver.Sloboda@cognizant.com");
-        addEmployee(678323,"name: Perevalova, Olga, email: Olga.Perevalova@cognizant.com");
-        addEmployee(499368,"name: Haidar, Samer, email: Samer.Haidar@cognizant.com");
+        addEmployee(374955,"{\"name\": \"Sloboda, Oliver\", \"email\": \"Oliver.Sloboda@cognizant.com\"}");
+        addEmployee(678323,"{\"name\": \"Perevalova, Olga\", \"email\": \"Olga.Perevalova@cognizant.com\"}");
+        addEmployee(499368,"{\"name\": \"Haidar, Samer\", \"email\": \"Samer.Haidar@cognizant.com\"}");
     }
 
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.TEXT_HTML)
     public String helloWorld() {
+        String ret = "<html>\n" +
+                "<head>\n" +
+                "<title>Einarbeitungsprojekt MCE Teil 1</title>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<p>Hello World\n" +
+                "<p><a href=\"mce_project_1/query?id=678323\">Example look-up for id=678323</a>\n" +
+                "<body>\n" +
+                "</html>";
 
-        return "Hello World!";
+        return ret;
     }
 
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("/query")
     public Response getPerson(@QueryParam("id") int id) {
-
         addEmployees();
         String output;
+        int status = 0;
 
-        if (person.containsKey(id)) output = person.get(id);
-        else output = "ID not found";
+        if (person.containsKey(id)) {
+            output = person.get(id);
+            status = 200;
+        }
+        else {
+            output = "{\"Error\": \"ID not found\"}";
+            status = 666;
+        }
 
-        return Response.status(200).entity(output).build();
+        return Response.status(status).entity(output).build();
     }
 }
 
